@@ -62,7 +62,7 @@ if /i "%Configuration%" == "Debug" (
 	set "MakefileExtension=Release"
 )
 if not "!ERRORLEVEL!"=="0" (exit /b !ERRORLEVEL!)
-call nmake /f Makefile.monitor_test.win_%Platform%.!MakefileExtension!
+call nmake /f Makefile.any_test.win_%Platform%.!MakefileExtension!
 if not "!ERRORLEVEL!"=="0" (exit /b !ERRORLEVEL!)
 
 

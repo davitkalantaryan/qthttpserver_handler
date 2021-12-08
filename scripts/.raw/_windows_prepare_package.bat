@@ -71,11 +71,14 @@ if exist "%directoryToDeploy%\vc_redist.%Platform%.exe" del "%directoryToDeploy%
 
 copy /Y "%exePath%" "%directoryToDeploy%\".
 
-call msbuild "%repositoryRoot%workspaces\monitor_all_vs\monitor_all.vcxproj" /t:Rebuild /p:Configuration=%Configuration% /p:Platform=%Platform% -m:2
+call msbuild "%repositoryRoot%workspaces\qthttpserver_handler_all_vs\qthttpserver_handler_all.vcxproj" /t:Rebuild /p:Configuration=%Configuration% /p:Platform=%Platform% -m:2
 if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
 copy /Y "%repositoryRoot%sys\win_%Platform%\%Configuration%\util"\*.dll "%directoryToDeploy%"\.
+copy /Y "%repositoryRoot%sys\win_%Platform%\%Configuration%\lib"\*.dll "%directoryToDeploy%"\.
 
 copy /Y "%repositoryRoot%dlls\win_%Platform%"\*.dll "%directoryToDeploy%"\.
+
+copy /Y "%QTDIR%\bin\Qt5WebSockets%libNameExt%.dll" "%directoryToDeploy%"\.
 
 if exist "!directoryToDeploy!.zip" del /f /q "!directoryToDeploy!.zip"
 powershell Compress-Archive -Path "!directoryToDeploy!"  -DestinationPath "!directoryToDeploy!.zip"
