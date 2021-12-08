@@ -82,3 +82,6 @@
 #/scripts/test_include_sourse.sh
 
 prj/tests/googletest_mult/Makefile.googletest_getter
+
+/include/QtHttpServer
+/include/QtSslServer
