@@ -1,6 +1,6 @@
 #
-# file:			servtest01.pro
-# path:			workspaces/prj/tests/servtest01_qt/servtest01.pro
+# file:			servtest02.pro
+# path:			workspaces/prj/tests/servtest01_qt/servtest02.pro
 # created on:		2021 Dec 08
 # creatd by:		Davit Kalantaryan (davit.kalantaryan@desy.de)
 # purpose:		Qt Project file to handle monitor project related files
@@ -22,9 +22,6 @@ LIBS += -lQtHttpServer
 LIBS += -L$${PRJ_PWD}/$${SYSTEM_PATH}/lib
 
 SOURCES += \
-    $${qthttpserverRepoRoot}/examples/httpserver/simple/main.cpp
-
-RESOURCES += \
-    $${qthttpserverRepoRoot}/examples/httpserver/simple/assets.qrc
+    $${qthttpserverRepoRoot}/examples/httpserver/afterrequest/main.cpp
 
 CONFIG += cmdline
