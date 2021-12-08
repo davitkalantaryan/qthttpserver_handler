@@ -18,7 +18,7 @@ repositoryRoot = $${PWD}/../..
 SUBDIRS		+=	"$${repositoryRoot}/prj/core/core_qt/sslserver.pro"
 SUBDIRS		+=	"$${repositoryRoot}/prj/core/core_qt/httpserver.pro"
 SUBDIRS		+=	"$${repositoryRoot}/prj/tests/servtest01_qt/servtest01.pro"
-SUBDIRS		+=	"$${repositoryRoot}/prj/tests/servtest01_qt/servtest01.pro"
+SUBDIRS		+=	"$${repositoryRoot}/prj/tests/servtest02_qt/servtest02.pro"
 SUBDIRS		+=	"$${repositoryRoot}/prj/tests/any_test_qt/any_test.pro"
 
 useExamplesFromHere {
