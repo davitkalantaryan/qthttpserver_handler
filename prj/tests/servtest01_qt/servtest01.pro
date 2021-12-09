@@ -19,6 +19,7 @@ QT += network core-private
 QT += concurrent
 
 LIBS += -lQtHttpServer
+LIBS += -lQtSslServer
 LIBS += -L$${PRJ_PWD}/$${SYSTEM_PATH}/lib
 
 SOURCES += \
