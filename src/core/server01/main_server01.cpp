@@ -112,6 +112,7 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 		QString filePath(url.toString());
 		if((filePath.size()>1) && (filePath.at(0)=='~')){
 			filePath.replace(0,1,QDir::homePath());
+			qDebug()<<"new path: "<<filePath;
 		}
 		QFileInfo aFileInfo(filePath);
 		if(aFileInfo.isFile()){
