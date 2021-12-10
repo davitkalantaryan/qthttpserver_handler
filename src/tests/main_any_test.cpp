@@ -10,6 +10,7 @@ int main(int a_argc, char* a_argv[])
 	
 	qDebug()<<QSslConfiguration::defaultConfiguration().isNull();
 	
+#if 0
 	QSslConfiguration sslConfiguration;
 	//QFile certFile(QStringLiteral("./localhost.cert"));
 	//QFile keyFile(QStringLiteral("./localhost.key"));
@@ -26,22 +27,25 @@ int main(int a_argc, char* a_argv[])
 	sslConfiguration.setPrivateKey(sslKey);
 	sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
 	httpServer.sslSetup(sslConfiguration);
+#endif
 	
 	httpServer.route("/", []() {
         return "Hello world";
     });
 	
-	//httpServer.route("/files/<arg>", [] (const QUrl &url) {
-	//	qDebug()<<"New querry: "<<url;
-    //    return QHttpServerResponse::fromFile(url.toString());
-    //});
+	httpServer.route("/files/<arg>", [] (const QUrl &url) {
+		qDebug()<<"New querry: "<<url;
+        return QHttpServerResponse::fromFile(url.toString());
+    });
 	
 	QObject::connect(&httpServer,&QHttpServer::missingHandler,&httpServer,[](const QHttpServerRequest &request, QTcpSocket *socket){
 		qDebug()<<"!!! request:"<<request;
 		qDebug()<<"+++ socket:"<< socket;
 	});
 	
-	const auto port = httpServer.listen(QHostAddress::Any,443);
+	//const auto port = httpServer.listen(QHostAddress::Any,443);
+    //const auto port = httpServer.listen(QHostAddress::Any,80);
+    const auto port = httpServer.listen(QHostAddress::Any);
     if (!port) {
         qDebug() << QCoreApplication::translate(
                 "QHttpServerExample", "Server failed to listen on a port.");

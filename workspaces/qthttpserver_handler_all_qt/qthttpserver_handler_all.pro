@@ -41,8 +41,8 @@ UNIX_SCRIPTS	+= $${repositoryRoot}/scripts/prepare_files
 WINDOWS_SCRIPTS	=  $$files($${repositoryRoot}/scripts/*.bat,true)
 WINDOWS_SCRIPTS	=  $$files($${repositoryRoot}/scripts/.cicd/*.bat,true)
 WINDOWS_SCRIPTS	=  $$files($${repositoryRoot}/scripts/.raw/*.bat,true)
-# MDS_IN_DOCS	=  $$files($${repositoryRoot}/docs/*.md,true)
-# TXT_IN_DOCS	=  $$files($${repositoryRoot}/docs/*.txt,true)
+MDS_IN_DOCS	=  $$files($${repositoryRoot}/docs/*.md,true)
+TXT_IN_DOCS	=  $$files($${repositoryRoot}/docs/*.txt,true)
 
 OTHER_FILES	=
 OTHER_FILES += $${UNIX_SCRIPTS}
