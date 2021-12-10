@@ -116,7 +116,7 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 		}
 		QFileInfo aFileInfo(filePath);
 		if(aFileInfo.isFile()){
-			return QHttpServerResponse::fromFile(url.toString());
+			return QHttpServerResponse::fromFile(filePath);
 		}
 		
 		return QHttpServerResponse(QString("File \"") + aFileInfo.filePath() + "\" is not available");
