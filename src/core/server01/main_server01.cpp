@@ -109,7 +109,11 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 	
 	httpServer.route("/files/<arg>", [] (const QUrl &url) {
 		qDebug()<<"File querry: "<<url;
-		QFileInfo aFileInfo(url.toString());
+		QString filePath(url.toString());
+		if((filePath.size()>1) && (filePath.at(0)=='~')){
+			filePath.replace(0,1,QDir::homePath());
+		}
+		QFileInfo aFileInfo(filePath);
 		if(aFileInfo.isFile()){
 			return QHttpServerResponse::fromFile(url.toString());
 		}
