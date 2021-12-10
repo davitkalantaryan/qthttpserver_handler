@@ -34,15 +34,15 @@ $${repositoryRoot}/prj/tests/servtest02_qt/servtest02.pro.depends = $${repositor
 $${repositoryRoot}/prj/tests/any_test_qt/any_test.pro.depends = $${repositoryRoot}/prj/core/core_qt/httpserver.pro
 
 
-UNIX_SCRIPTS	=  $$files($${repositoryRoot}/scripts/*.sh,true)
-UNIX_SCRIPTS	+= $$files($${repositoryRoot}/scripts/.cicd/*.sh,true)
-UNIX_SCRIPTS	+= $$files($${repositoryRoot}/scripts/.raw/*.sh,true)
-UNIX_SCRIPTS	+= $${repositoryRoot}/scripts/prepare_files
-WINDOWS_SCRIPTS	=  $$files($${repositoryRoot}/scripts/*.bat,true)
-WINDOWS_SCRIPTS	=  $$files($${repositoryRoot}/scripts/.cicd/*.bat,true)
-WINDOWS_SCRIPTS	=  $$files($${repositoryRoot}/scripts/.raw/*.bat,true)
-MDS_IN_DOCS	=  $$files($${repositoryRoot}/docs/*.md,true)
-TXT_IN_DOCS	=  $$files($${repositoryRoot}/docs/*.txt,true)
+UNIX_SCRIPTS	 =  $$files($${repositoryRoot}/scripts/*.sh,true)
+UNIX_SCRIPTS	+=  $$files($${repositoryRoot}/scripts/.cicd/*.sh,true)
+UNIX_SCRIPTS	+=  $$files($${repositoryRoot}/scripts/.raw/*.sh,true)
+UNIX_SCRIPTS	+=  $${repositoryRoot}/scripts/prepare_files
+WINDOWS_SCRIPTS	 =  $$files($${repositoryRoot}/scripts/*.bat,true)
+WINDOWS_SCRIPTS	+=  $$files($${repositoryRoot}/scripts/.cicd/*.bat,true)
+WINDOWS_SCRIPTS	+=  $$files($${repositoryRoot}/scripts/.raw/*.bat,true)
+MDS_IN_DOCS	 =  $$files($${repositoryRoot}/docs/*.md,true)
+TXT_IN_DOCS	 =  $$files($${repositoryRoot}/docs/*.txt,true)
 
 OTHER_FILES	=
 OTHER_FILES += $${UNIX_SCRIPTS}

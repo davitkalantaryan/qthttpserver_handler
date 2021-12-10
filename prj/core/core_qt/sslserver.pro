@@ -16,8 +16,8 @@ DEFINES += QT_BUILD_SSLSERVER_LIB
 qthttpserverRepoRoot = $${PWD}/../../../qthttpserver
 sslSourcesDir = $${qthttpserverRepoRoot}/src/sslserver
 
-#INCLUDEPATH += $${PWD}/../../../include
-#INCLUDEPATH += $${PWD}/../../../include_p
+INCLUDEPATH += $${PWD}/../../../include
+INCLUDEPATH += $${PWD}/../../../include_p
 
 QT = network core
 
