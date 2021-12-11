@@ -12,23 +12,28 @@
 class HttpThreadBase : public QThread
 {
 protected:
+	HttpThreadBase(const char* a_arg0);
 	void RunReimplemented(QHttpServer* a_pHttpServer);
+protected:
+private:
+	const char*const m_argv0;
 };
 
 
 class HttpThread : public HttpThreadBase
 {
+public:
+	using HttpThreadBase::HttpThreadBase;
+private:
 	void run() override;
 };
 
 class HttpsThread : public HttpThreadBase
 {
 public:
-	HttpsThread(const char* a_arg0);
+	using HttpThreadBase::HttpThreadBase;
 private:
 	void run() override;
-private:
-	const char*const m_argv0;
 };
 
 
@@ -63,13 +68,6 @@ void HttpThread::run()
 
 /*//////*/
 
-HttpsThread::HttpsThread(const char* a_arg0)
-	:
-	  m_argv0(a_arg0)
-{
-}
-
-
 void HttpsThread::run()
 {
 	QDir appDir = QFileInfo(m_argv0).dir().path();
@@ -103,6 +101,12 @@ void HttpsThread::run()
 
 /*//////*/
 
+HttpThreadBase::HttpsThread(const char* a_arg0)
+	:
+	  m_argv0(a_arg0)
+{
+}
+
 void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 {
 	QHttpServer& httpServer = *a_pHttpServer;
@@ -124,11 +128,19 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
     });
 	
 	httpServer.route("/index.html", []() {
-        return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
+        //return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
+		QDir appDir = QFileInfo(m_argv0).dir().path();
+		QDir indexFileDir = QFileInfo(appDir.path()).dir().path();
+		QString indexFilePath = QFileInfo(indexFileDir,"index.html").filePath();
+		return QHttpServerResponse::fromFile(indexFilePath);
     });
 	
 	httpServer.route("/", []() {
-        return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
+        //return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
+		QDir appDir = QFileInfo(m_argv0).dir().path();
+		QDir indexFileDir = QFileInfo(appDir.path()).dir().path();
+		QString indexFilePath = QFileInfo(indexFileDir,"index.html").filePath();
+		return QHttpServerResponse::fromFile(indexFilePath);
     });
 	
 	//QObject::connect(&httpServer,&QHttpServer::missingHandler,&httpServer,[](const QHttpServerRequest &request, QTcpSocket *socket){
