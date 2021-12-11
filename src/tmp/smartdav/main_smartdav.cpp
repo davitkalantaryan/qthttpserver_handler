@@ -11,11 +11,11 @@
 
 class HttpThreadBase : public QThread
 {
-protected:
+public:
 	HttpThreadBase(const char* a_arg0);
+protected:
 	void RunReimplemented(QHttpServer* a_pHttpServer);
 protected:
-private:
 	const char*const m_argv0;
 };
 
@@ -40,7 +40,7 @@ private:
 int main(int a_argc, char* a_argv[])
 {
 	QCoreApplication aApp(a_argc,a_argv);
-	HttpThread httpThread;
+	HttpThread httpThread(a_argv[0]);
 	HttpsThread httpsThread(a_argv[0]);
 		
 	httpThread.start();
@@ -101,7 +101,7 @@ void HttpsThread::run()
 
 /*//////*/
 
-HttpThreadBase::HttpsThread(const char* a_arg0)
+HttpThreadBase::HttpThreadBase(const char* a_arg0)
 	:
 	  m_argv0(a_arg0)
 {
@@ -127,7 +127,7 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 		return QHttpServerResponse(QString("File \"") + aFileInfo.filePath() + "\" is not available");
     });
 	
-	httpServer.route("/index.html", []() {
+	httpServer.route("/index.html", [this]() {
         //return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
 		QDir appDir = QFileInfo(m_argv0).dir().path();
 		QDir indexFileDir = QFileInfo(appDir.path()).dir().path();
@@ -135,7 +135,7 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 		return QHttpServerResponse::fromFile(indexFilePath);
     });
 	
-	httpServer.route("/", []() {
+	httpServer.route("/", [this]() {
         //return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
 		QDir appDir = QFileInfo(m_argv0).dir().path();
 		QDir indexFileDir = QFileInfo(appDir.path()).dir().path();
