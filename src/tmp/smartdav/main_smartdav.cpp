@@ -15,6 +15,10 @@ public:
 	HttpThreadBase(const char* a_arg0);
 protected:
 	void RunReimplemented(QHttpServer* a_pHttpServer);
+private:
+	inline QHttpServerResponse HandleAnyResponce(const QString& a_url, bool a_bAnyFileAccepted);
+	inline QHttpServerResponse HandleAnyResponceFromUrl(const QUrl& a_url);
+	
 protected:
 	const char*const m_argv0;
 };
@@ -107,40 +111,52 @@ HttpThreadBase::HttpThreadBase(const char* a_arg0)
 {
 }
 
+
+inline QHttpServerResponse HttpThreadBase::HandleAnyResponce(const QString& a_url, bool a_bAnyFileAccepted)
+{
+	QString filePath(a_url);
+	if(a_bAnyFileAccepted){
+		if((filePath.size()>1) && (filePath.at(0)=='~')){
+			filePath.replace(0,1,QDir::homePath());
+			qDebug()<<"new path: "<<filePath;
+		}
+	}
+	QFileInfo aFileInfo(filePath);
+	if(aFileInfo.isFile()){
+		return QHttpServerResponse::fromFile(filePath);
+	}
+	
+	return QHttpServerResponse(QString("Resource \"") + aFileInfo.filePath() + "\" is not available");
+}
+
+
+inline QHttpServerResponse HttpThreadBase::HandleAnyResponceFromUrl(const QUrl& a_url)
+{
+	QDir appDir = QFileInfo(m_argv0).dir().path();
+	QDir oneUpDir = QFileInfo(appDir.path()).dir().path();
+	QString requestFilePath = QFileInfo(oneUpDir,a_url.toString()).filePath();
+	return HandleAnyResponce(requestFilePath,false);
+}
+
+
 void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
 {
 	QHttpServer& httpServer = *a_pHttpServer;
 	HttpsThread* pIsSafe = dynamic_cast<HttpsThread*>(this);
 	
-	httpServer.route("/____files/<arg>", [] (const QUrl &url) {
-		qDebug()<<"File querry: "<<url;
-		QString filePath(url.toString());
-		if((filePath.size()>1) && (filePath.at(0)=='~')){
-			filePath.replace(0,1,QDir::homePath());
-			qDebug()<<"new path: "<<filePath;
-		}
-		QFileInfo aFileInfo(filePath);
-		if(aFileInfo.isFile()){
-			return QHttpServerResponse::fromFile(filePath);
-		}
-		
-		return QHttpServerResponse(QString("File \"") + aFileInfo.filePath() + "\" is not available");
+	httpServer.route("/____files/<arg>", [this] (const QUrl &a_url) {
+		qDebug()<<"File querry: "<<a_url;
+		return HandleAnyResponce(a_url.toString(),true);
     });
 	
-	httpServer.route("/index.html", [this]() {
-        //return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
-		QDir appDir = QFileInfo(m_argv0).dir().path();
-		QDir indexFileDir = QFileInfo(appDir.path()).dir().path();
-		QString indexFilePath = QFileInfo(indexFileDir,"index.html").filePath();
-		return QHttpServerResponse::fromFile(indexFilePath);
-    });
 	
 	httpServer.route("/", [this]() {
-        //return QHttpServerResponse::fromFile(QStringLiteral("index.html"));
-		QDir appDir = QFileInfo(m_argv0).dir().path();
-		QDir indexFileDir = QFileInfo(appDir.path()).dir().path();
-		QString indexFilePath = QFileInfo(indexFileDir,"index.html").filePath();
-		return QHttpServerResponse::fromFile(indexFilePath);
+        return HandleAnyResponceFromUrl(QUrl("index.html"));
+    });
+	
+	
+	httpServer.route("/<arg>", [this](const QUrl& a_url) {
+		return HandleAnyResponceFromUrl(a_url);
     });
 	
 	//QObject::connect(&httpServer,&QHttpServer::missingHandler,&httpServer,[](const QHttpServerRequest &request, QTcpSocket *socket){
