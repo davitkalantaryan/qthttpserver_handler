@@ -75,7 +75,7 @@ void HttpThread::run()
 void HttpsThread::run()
 {
 	QDir appDir = QFileInfo(m_argv0).dir().path();
-	QString certFilePath = QFileInfo(appDir,"_.smartdav.de_.cert").filePath();
+	QString certFilePath = QFileInfo(appDir,"smartdav.de_ssl_certificate.cer").filePath();
 	QString keyFilePath = QFileInfo(appDir,"_.smartdav.de_private_key.key").filePath();
 	QFile certFile(certFilePath);
 	QFile keyFile(keyFilePath);
