@@ -85,3 +85,4 @@ prj/tests/googletest_mult/Makefile.googletest_getter
 
 /include/QtHttpServer
 /include/QtSslServer
+/include_p

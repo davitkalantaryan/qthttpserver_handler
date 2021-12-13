@@ -35,27 +35,4 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 #trap 'echo "\"${last_command}\" command finished with exit code $?."' EXIT
 
-mkdir -p include_p/private
-mkdir -p include_p/3rdparty/http-parser
-mkdir -p include/QtSslServer
-mkdir -p include/QtHttpServer
-
-cp qthttpserver/src/sslserver/qsslserver_p.h include_p/private/.
-cp qthttpserver/src/sslserver/qsslserver.h include/QtSslServer/.
-cp qthttpserver/src/sslserver/qtsslserverglobal.h include/QtSslServer/.
-
-cp qthttpserver/src/3rdparty/http-parser/http_parser.h  include_p/3rdparty/http-parser/.
-
-cp qthttpserver/src/httpserver/*.h include/QtHttpServer/.
-cp qthttpserver/src/httpserver/*_p.h include_p/private/.
-rm include/QtHttpServer/*_p.h
-
-
-cd include/QtHttpServer
-
-echo '#pragma once' > QtHttpServer
-
-for filename in *.h; do
-    echo '#include' \"${filename}\" >> QtHttpServer
-done
-
+sudo apt install libgl1-mesa-dev -y

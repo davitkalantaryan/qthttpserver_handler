@@ -23,9 +23,7 @@ LIBS += -lQtSslServer
 LIBS += -L$${PRJ_PWD}/$${SYSTEM_PATH}/lib
 
 SOURCES += \
-    $${qthttpserverRepoRoot}/examples/httpserver/simple/main.cpp
+    "$${PWD}/../../../src/tmp/smartdav/main_smartdav.cpp"
 
-RESOURCES += \
-    $${qthttpserverRepoRoot}/examples/httpserver/simple/assets.qrc
 
-CONFIG += cmdline
+# CONFIG += cmdline

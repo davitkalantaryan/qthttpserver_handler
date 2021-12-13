@@ -23,9 +23,7 @@ LIBS += -lQtSslServer
 LIBS += -L$${PRJ_PWD}/$${SYSTEM_PATH}/lib
 
 SOURCES += \
-    $${qthttpserverRepoRoot}/examples/httpserver/simple/main.cpp
+    "$${PWD}/../../../src/core/server01/main_server01.cpp"
 
-RESOURCES += \
-    $${qthttpserverRepoRoot}/examples/httpserver/simple/assets.qrc
 
 CONFIG += cmdline
