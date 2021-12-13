@@ -20,6 +20,10 @@ isEmpty( cpputilsRepoRoot ) {
 	cpputilsRepoRoot += $${PWD}/../../..
 }
 
+isEmpty( repositoryRoot ) {
+	repositoryRoot += $${cpputilsRepoRoot}
+}
+
 # always replave below line with files replace function
 # example: $$files($${repositoryRoot}/scripts/*.sh,true)
 # defineReplace(cpputilsFindFilesRecursive){
