@@ -25,10 +25,10 @@
 
 namespace qthttpserverhandler{
 
-//#define HTTP_SERV_PORT	80
-//#define HTTPS_SERV_PORT	443
-#define HTTP_SERV_PORT	9031
-#define HTTPS_SERV_PORT	9032
+#define HTTP_SERV_PORT	80
+#define HTTPS_SERV_PORT	443
+//#define HTTP_SERV_PORT	9031
+//#define HTTPS_SERV_PORT	9032
 
 #define QTHTTPSERVERHANDLER_ANY_FILE	"/____files/"
 static constexpr int s_cnAnyFileLenPlus1 = 11;
