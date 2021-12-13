@@ -77,6 +77,7 @@ win32 {
     #}
 
 } else:linux {
+    QMAKE_CXXFLAGS += -Wno-attributes
     DEFINES += LINUX
     CODENAME = $$system(lsb_release -c | cut -f 2)
     SYSTEM_PATH = sys/$$CODENAME

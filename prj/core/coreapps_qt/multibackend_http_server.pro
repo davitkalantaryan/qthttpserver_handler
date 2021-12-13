@@ -22,6 +22,18 @@ LIBS += -lQtHttpServer
 LIBS += -lQtSslServer
 LIBS += -L$${PRJ_PWD}/$${SYSTEM_PATH}/lib
 
+macx {
+} else:win32 {
+} else:linux {
+	LIBS += -ldl
+} else:android {
+} else:ios {
+} else {
+	# WASM
+	LIBS += -ldl
+	LIBS += -s DISABLE_EXCEPTION_CATCHING=0
+}
+
 
 # HEADERS	 +=  $$files($${repositoryRoot}/include/*.h,true)
 # HEADERS	 +=  $$files($${repositoryRoot}/include/*.hpp,true)
