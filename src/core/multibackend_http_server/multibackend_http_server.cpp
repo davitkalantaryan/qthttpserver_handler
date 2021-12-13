@@ -8,6 +8,7 @@
 #include "multibackend_http_server.hpp"
 #include <qthttpserverhandler/multibackend_http_server.h>
 #include <functional>
+#include <unordered_set>
 #include <QDir>
 #include <QFile>
 #include <QThread>
@@ -47,7 +48,7 @@ typedef  void*			HMODULE_t;
 #endif
 
 
-static QHttpServerResponse HandleRequestDefault(bool* a_pbRet, const QHttpServerRequest&, QTcpSocket*){*a_pbRet= false;return QHttpServerResponse("Bad request");}
+static QHttpServerResponse* HandleRequestDefault(const QHttpServerRequest&, QTcpSocket*){return nullptr;}
 
 class DataCleaner{
 public:
@@ -124,6 +125,7 @@ public:
 	SSubdomainHandler*		m_pFirstLib;     // leavs in worker thread
 	SSubdomainHandlerFnc*	m_pFirstFncUnSf; // leavs in worker thread
 	SSubdomainHandlerFnc*	m_pFirstFncSafe; // leavs in worker thread
+	::std::unordered_set<QString>	m_libs;
 };
 
 
@@ -243,13 +245,15 @@ void MultibackendHttpServer_p::run()
 
 inline bool MultibackendHttpServer_p::HandleClientRequest(HttpServerBase* a_pServer,const QHttpServerRequest& a_request, QTcpSocket* a_socket, SSubdomainHandlerFnc* a_pFirst)
 {
-	::std::shared_ptr<QHttpServerResponse> pResponse;
 	SSubdomainHandlerFnc* pHandler = a_pFirst;
-	bool bRespond = false;
+	QHttpServerResponse* pResponse;
 	while(pHandler){
-		QHttpServerResponse aResponse = (*pHandler->fpFnc)(&bRespond,a_request,a_socket);
-		if(bRespond){
-			a_pServer->sendResponse(std::move(aResponse), a_request, a_socket);
+		pResponse = (*pHandler->fpFnc)(a_request,a_socket);
+		if(pResponse){
+			DataCleaner aCleaner([pResponse](){
+				delete pResponse;
+			});
+			a_pServer->sendResponse(std::move(*pResponse), a_request, a_socket);
 			return true;
 		}
 		pHandler = pHandler->next;
@@ -310,40 +314,46 @@ inline void MultibackendHttpServer_p::DefaultrequestHandler(HttpServer* a_pServe
 
 inline void MultibackendHttpServer_p::TryToLoaPluginAndGetSymbols(const QString& a_pluginName)
 {
-	HMODULE_t libHandle = QthttpserverhandlerLoadLib(a_pluginName.toStdString().c_str());
-	if(libHandle){
-		void *pUnSafeFnc, *pSafeFnc;
-		pUnSafeFnc = QthttpserverhandlerGetLibSym(libHandle,QTHTTPSERVERHANDLER_MULTIBACKEND_FNC_NAME_STR);
-		pSafeFnc = QthttpserverhandlerGetLibSym(libHandle,QTHTTPSERVERHANDLER_MULTIBACKEND_FNC_NAME_S_STR);
-		if(pUnSafeFnc||pSafeFnc){
-			SSubdomainHandler* pLibHandle = new SSubdomainHandler(libHandle,
-																  reinterpret_cast<TypeHandleRequest>(pUnSafeFnc),
-																  reinterpret_cast<TypeHandleRequest>(pSafeFnc));
-			{
-				if(m_pFirstLib){
-					m_pFirstLib->prev = pLibHandle;
+	if(m_libs.count(a_pluginName)<1){
+		HMODULE_t libHandle = QthttpserverhandlerLoadLib(a_pluginName.toStdString().c_str());
+		if(libHandle){
+			void *pUnSafeFnc, *pSafeFnc;
+			pUnSafeFnc = QthttpserverhandlerGetLibSym(libHandle,QTHTTPSERVERHANDLER_MULTIBACKEND_FNC_NAME_STR);
+			pSafeFnc = QthttpserverhandlerGetLibSym(libHandle,QTHTTPSERVERHANDLER_MULTIBACKEND_FNC_NAME_S_STR);
+			if(pUnSafeFnc||pSafeFnc){
+				SSubdomainHandler* pLibHandle = new SSubdomainHandler(libHandle,
+																	  reinterpret_cast<TypeHandleRequest>(pUnSafeFnc),
+																	  reinterpret_cast<TypeHandleRequest>(pSafeFnc));
+				{
+					if(m_pFirstLib){
+						m_pFirstLib->prev = pLibHandle;
+					}
+					pLibHandle->next = m_pFirstLib;
+					m_pFirstLib = pLibHandle;
 				}
-				pLibHandle->next = m_pFirstLib;
-				m_pFirstLib = pLibHandle;
-			}
-			{
-				SSubdomainHandlerFnc* pFirstFnc = pLibHandle->fpFncUnS;
-				if(m_pFirstFncUnSf){
-					m_pFirstFncUnSf->prev = pFirstFnc;
+				{
+					SSubdomainHandlerFnc* pFirstFnc = pLibHandle->fpFncUnS;
+					if(m_pFirstFncUnSf){
+						m_pFirstFncUnSf->prev = pFirstFnc;
+					}
+					pFirstFnc->next = m_pFirstFncUnSf;
+					m_pFirstFncUnSf = pFirstFnc;
 				}
-				pFirstFnc->next = m_pFirstFncUnSf;
-				m_pFirstFncUnSf = pFirstFnc;
-			}
-			{
-				SSubdomainHandlerFnc* pFirstFnc = pLibHandle->fpFncSafe;
-				if(m_pFirstFncSafe){
-					m_pFirstFncSafe->prev = pFirstFnc;
+				{
+					SSubdomainHandlerFnc* pFirstFnc = pLibHandle->fpFncSafe;
+					if(m_pFirstFncSafe){
+						m_pFirstFncSafe->prev = pFirstFnc;
+					}
+					pFirstFnc->next = m_pFirstFncSafe;
+					m_pFirstFncSafe = pFirstFnc;
 				}
-				pFirstFnc->next = m_pFirstFncSafe;
-				m_pFirstFncSafe = pFirstFnc;
+				m_libs.insert(a_pluginName);
+			} // if(pSaveFnc||pUnSafeFnc){
+			else{
+				QthttpserverhandlerFreeLib(libHandle);
 			}
-		} // if(pSaveFnc||pUnSafeFnc){
-	}  // if(libHandle){
+		}  // if(libHandle){
+	}  // if(m_libs.count(a_pluginName)<1){
 }
 
 

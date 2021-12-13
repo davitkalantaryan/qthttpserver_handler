@@ -25,7 +25,8 @@
 
 QTHTTPSERVERHANDLER_BEGIN_C
 
-typedef QHttpServerResponse (*TypeHandleRequest)(bool* a_pResponce, const QHttpServerRequest& request, QTcpSocket* socket);
+// to not delete returned pointer. Return null to indicate, that search should be continued
+typedef QHttpServerResponse* (*TypeHandleRequest)(const QHttpServerRequest& request, QTcpSocket* socket);
 
 
 QTHTTPSERVERHANDLER_END_C
