@@ -127,7 +127,8 @@ void HttpThreadBase::RunReimplemented(QHttpServer* a_pHttpServer)
     });
 	
 	QObject::connect(&httpServer,&QHttpServer::missingHandler,&httpServer,[](const QHttpServerRequest &request, QTcpSocket *socket){
-		qDebug()<<"!!! request:"<<request;
+		QUrl aUrl = request.url();
+		qDebug()<<"!!! request:"<<aUrl;
 		qDebug()<<"+++ socket:"<< socket;
 	});
 	

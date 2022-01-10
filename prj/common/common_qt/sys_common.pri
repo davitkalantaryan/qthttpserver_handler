@@ -20,6 +20,10 @@ isEmpty( cpputilsRepoRoot ) {
 	cpputilsRepoRoot += $${PWD}/../../..
 }
 
+isEmpty( repositoryRoot ) {
+	repositoryRoot += $${cpputilsRepoRoot}
+}
+
 # always replave below line with files replace function
 # example: $$files($${repositoryRoot}/scripts/*.sh,true)
 # defineReplace(cpputilsFindFilesRecursive){
@@ -73,6 +77,7 @@ win32 {
     #}
 
 } else:linux {
+    QMAKE_CXXFLAGS += -Wno-attributes
     DEFINES += LINUX
     CODENAME = $$system(lsb_release -c | cut -f 2)
     SYSTEM_PATH = sys/$$CODENAME
