@@ -40,5 +40,7 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 #trap 'echo "\"${last_command}\" command finished with exit code $?."' EXIT
 
+./../prepare_files
+
 ./_unix_compile_and_prepare_package.sh gcc_64 Debug
 ./_unix_compile_and_prepare_package.sh gcc_64 Release
