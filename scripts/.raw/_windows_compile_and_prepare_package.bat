@@ -23,6 +23,20 @@ cd /D "%scriptDirectory%..\.."
 set repositoryRoot=%cd%\
 echo "repositoryRoot="%repositoryRoot%
 
+
+set "Platform=%1"
+
+if /i "%2"=="Debug" (
+	set "CONFIG_ADD=CONFIG-=release CONFIG+=debug"
+	set "Configuration=Debug"
+	set "DirToDelete=debug"
+) else (
+	set "CONFIG_ADD=CONFIG+=release CONFIG-=debug"
+	set "Configuration=Release"
+	set "DirToDelete=release"
+)
+
+
 if /i "!VSCMD_ARG_TGT_ARCH!"=="!Platform!" (
 	echo "VsDevCmd already set to !Platform!"
 ) else (
@@ -51,19 +65,21 @@ if not defined QTDIR (
 )
 echo QTDIR is !QTDIR!
 
-cd /D "%repositoryRoot%prj\tests\any_test_qt"
-if exist ".qmake.stash" del ".qmake.stash"
-rem exit /b 0
-if /i "%Configuration%" == "Debug" (
-    call "%QTDIR%\bin\qmake" CONFIG-=release CONFIG+=debug
-	set "MakefileExtension=Debug"
-) else (
-    call "%QTDIR%\bin\qmake" CONFIG+=release CONFIG-=debug
-	set "MakefileExtension=Release"
-)
-if not "!ERRORLEVEL!"=="0" (exit /b !ERRORLEVEL!)
-call nmake /f Makefile.any_test.win_%Platform%.!MakefileExtension!
-if not "!ERRORLEVEL!"=="0" (exit /b !ERRORLEVEL!)
+cd "%repositoryRoot%prj\core\corelibs_qt"
+if exist "Makefile.*" del /s /q "Makefile.*"
+if exist ".qmake.stash" del /s /q ".qmake.stash"
+if exist "!DirToDelete!" rmdir /s /q "!DirToDelete!"
+
+
+call %QTDIR%\bin\qmake sslserver.pro !CONFIG_ADD!
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
+call nmake -f Makefile.QtSslServer.win_%1.!Configuration!
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
+
+call %QTDIR%\bin\qmake httpserver.pro !CONFIG_ADD!
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
+call nmake -f Makefile.QtHttpServer.win_%1.!Configuration!
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
 
 
 exit /b %ERRORLEVEL%
