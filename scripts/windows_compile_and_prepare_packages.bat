@@ -22,7 +22,13 @@ set "rawScriptsDir=%cd%\"
 call .\..\prepare_files.bat
 
 call .\_windows_compile_and_prepare_package.bat x64 Debug
-rem call .\_windows_compile_and_prepare_package.bat x64 Release
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
+call .\_windows_compile_and_prepare_package.bat x64 Release
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
+call .\_windows_compile_and_prepare_package.bat x86 Debug
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
+call .\_windows_compile_and_prepare_package.bat x86 Release
+if not "%ERRORLEVEL%"=="0" (exit /b %ERRORLEVEL%)
 
 
 
